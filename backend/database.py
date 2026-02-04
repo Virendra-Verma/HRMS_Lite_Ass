@@ -7,24 +7,30 @@ from dotenv import load_dotenv
 # 1. Load environment variables
 load_dotenv()
 
-# 2. Database credentials from .env
-DB_NAME = os.getenv("DB_NAME", "hrms_db")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "123")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
+# 2. PRIORITY: Pehle poora DATABASE_URL check karein (Render isi ka use karta hai)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# 3. FALLBACK: Agar DATABASE_URL nahi milta (Local testing ke liye)
+if not DATABASE_URL:
+    DB_NAME = os.getenv("DB_NAME", "hrms_db")
+    DB_USER = os.getenv("DB_USER", "postgres")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "123")
+    DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_PORT = os.getenv("DB_PORT", "5432")
+    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+# Render/PostgreSQL fix: sqlalchemy 'postgres://' ko nahi pehchanta, 
+# 'postgresql://' hona zaroori hai
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# 4. Production settings (SSL for Render)
 NODE_ENV = os.getenv("NODE_ENV", "development")
-
-# 3. Connection URL
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
-# 4. Production settings (SSL for Render/Railway)
 connect_args = {}
 if NODE_ENV == "production":
     connect_args = {"sslmode": "require"}
 
 # 5. Engine setup
-# echo=True development mein saari SQL queries terminal par dikhayega
 engine = create_engine(
     DATABASE_URL, 
     connect_args=connect_args, 
@@ -35,7 +41,7 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# 7. DB Dependency (Circular import se bachne ke liye import nahi, yahin define karein)
+# 7. DB Dependency
 def get_db():
     db = SessionLocal()
     try:
