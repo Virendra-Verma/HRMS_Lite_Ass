@@ -1,9 +1,3 @@
-Bhai 👍 content mast hai, bas **GitHub README.md** ke format me thoda clean + structured karna hoga taaki **recruiter / reviewer ek nazar me impress ho** 😄
-
-Neeche main **ready-to-paste README.md (Markdown)** de raha hoon.
-Tum bas **README.md file** me ye content daal do 👇
-
----
 
 ## 📘 HRMS Lite – Full-Stack Human Resource Management System
 
