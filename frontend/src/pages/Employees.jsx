@@ -79,7 +79,7 @@ const AddEmployeeForm = ({ onSubmit, onCancel, isSubmitting }) => {
             </div>
 
             <div>
-                <label className="label">Position</label>
+                <label className="label">Position (Employee ID)</label>
                 <input
                     type="text"
                     name="position"
@@ -118,22 +118,22 @@ const AddEmployeeForm = ({ onSubmit, onCancel, isSubmitting }) => {
 const DeleteConfirmModal = ({ employee, onConfirm, onCancel, isDeleting }) => {
     return (
         <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-warning-500/20 flex items-center justify-center">
-                <svg className="w-8 h-8 text-warning-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error-500/20 flex items-center justify-center">
+                <svg className="w-8 h-8 text-error-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
             </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Archive Employee</h3>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Delete Employee</h3>
             <p className="text-[var(--text-tertiary)] mb-6">
-                Are you sure you want to archive <strong className="text-[var(--text-secondary)]">{employee?.name}</strong>?
-                The employee record will be hidden but can be restored later.
+                Are you sure you want to permanently delete <strong className="text-[var(--text-secondary)]">{employee?.name}</strong>?
+                This action cannot be undone and will remove all associated data.
             </p>
             <div className="flex gap-3">
                 <button onClick={onCancel} className="btn btn-secondary flex-1">
                     Cancel
                 </button>
                 <button onClick={onConfirm} className="btn btn-danger flex-1" disabled={isDeleting}>
-                    {isDeleting ? 'Archiving...' : 'Archive'}
+                    {isDeleting ? 'Deleting...' : 'Delete Permanently'}
                 </button>
             </div>
         </div>
@@ -149,7 +149,6 @@ const Employees = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [toast, setToast] = useState(null);
     const limit = 10;
@@ -169,7 +168,6 @@ const Employees = () => {
             if (searchTerm) params.search = searchTerm;
             const response = await employeeAPI.getAll(params);
             setEmployees(response.data || []);
-            setTotalPages(response.totalPages || 1);
             setTotal(response.total || 0);
         } catch (err) {
             setError(err.message);
@@ -189,19 +187,18 @@ const Employees = () => {
     const handleAddEmployee = async (data) => {
         setIsSubmitting(true);
         try {
-            // Transform fullName to name for API
             const apiData = {
-                ...data,
                 name: data.fullName,
-                joinDate: new Date().toISOString().split('T')[0]
+                email: data.email,
+                department: data.department,
+                employeeId: data.position 
             };
-            delete apiData.fullName;
             await employeeAPI.create(apiData);
             setIsAddModalOpen(false);
             showToast('Employee added successfully!', 'success');
             fetchEmployees();
         } catch (err) {
-            showToast(err.message || 'Failed to add employee', 'error');
+            showToast(err.response?.data?.detail || err.message || 'Failed to add employee', 'error');
         } finally {
             setIsSubmitting(false);
         }
@@ -213,10 +210,10 @@ const Employees = () => {
         try {
             await employeeAPI.delete(deleteEmployee.id);
             setDeleteEmployee(null);
-            showToast('Employee archived successfully!', 'success');
+            showToast('Employee deleted permanently!', 'success');
             fetchEmployees();
         } catch (err) {
-            showToast(err.message || 'Failed to archive employee', 'error');
+            showToast(err.message || 'Failed to delete employee', 'error');
         } finally {
             setIsSubmitting(false);
         }
@@ -227,7 +224,6 @@ const Employees = () => {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-heading font-bold text-[var(--text-primary)] mb-2">Employees</h1>
@@ -241,7 +237,6 @@ const Employees = () => {
                 </button>
             </div>
 
-            {/* Search - Dark style matching reference design */}
             <div className="relative">
                 <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -255,7 +250,6 @@ const Employees = () => {
                 />
             </div>
 
-            {/* Employee List */}
             {employees.length === 0 ? (
                 <EmptyState
                     icon={
@@ -287,11 +281,11 @@ const Employees = () => {
                                         <td>
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold flex-shrink-0">
-                                                    {employee.name?.charAt(0).toUpperCase()}
+                                                    {employee.name?.charAt(0).toUpperCase() || 'E'}
                                                 </div>
                                                 <div>
                                                     <p className="font-medium text-[var(--text-primary)]">{employee.name}</p>
-                                                    <p className="text-xs text-[var(--text-muted)]">{employee.employeeId}</p>
+                                                    <p className="text-xs text-[var(--text-muted)]">{employee.employee_id}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -300,16 +294,18 @@ const Employees = () => {
                                             <span className="badge badge-info">{employee.department}</span>
                                         </td>
                                         <td className="text-[var(--text-muted)] text-sm">
-                                            {new Date(employee.createdAt).toLocaleDateString()}
+                                            {employee.joining_date 
+                                                ? new Date(employee.joining_date).toLocaleDateString('en-GB') 
+                                                : 'N/A'}
                                         </td>
                                         <td className="text-right">
                                             <button
                                                 onClick={() => setDeleteEmployee(employee)}
-                                                className="btn btn-ghost btn-icon text-warning-400 hover:text-warning-300 hover:bg-warning-500/10"
-                                                title="Archive employee"
+                                                className="btn btn-ghost btn-icon text-error-400 hover:text-error-300 hover:bg-error-500/10"
+                                                title="Delete permanently"
                                             >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
                                         </td>
@@ -319,10 +315,9 @@ const Employees = () => {
                         </table>
                     </div>
 
-                    {/* Pagination */}
                     <Pagination
                         page={page}
-                        totalPages={totalPages}
+                        totalPages={Math.ceil(total / limit)}
                         total={total}
                         limit={limit}
                         onPageChange={setPage}
@@ -330,7 +325,6 @@ const Employees = () => {
                 </>
             )}
 
-            {/* Add Employee Modal */}
             <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Add New Employee">
                 <AddEmployeeForm
                     onSubmit={handleAddEmployee}
@@ -339,8 +333,7 @@ const Employees = () => {
                 />
             </Modal>
 
-            {/* Delete Confirmation Modal */}
-            <Modal isOpen={!!deleteEmployee} onClose={() => setDeleteEmployee(null)} title="Confirm Archive" size="sm">
+            <Modal isOpen={!!deleteEmployee} onClose={() => setDeleteEmployee(null)} title="Confirm Permanent Delete" size="sm">
                 <DeleteConfirmModal
                     employee={deleteEmployee}
                     onConfirm={handleDeleteEmployee}
@@ -349,7 +342,6 @@ const Employees = () => {
                 />
             </Modal>
 
-            {/* Toast */}
             {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
         </div>
     );
