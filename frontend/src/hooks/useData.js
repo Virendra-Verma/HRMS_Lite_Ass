@@ -149,7 +149,6 @@ export const useDepartments = () => {
 // Toast notification hook
 export const useToast = () => {
     const [toast, setToast] = useState(null);
-
     const showToast = useCallback((message, type = 'success') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 4000);
@@ -159,3 +158,4 @@ export const useToast = () => {
 
     return { toast, showToast, hideToast };
 };
+
