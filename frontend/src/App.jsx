@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/common';
 import { Dashboard, Employees, Attendance } from './pages';
 
-
 function App() {
   return (
     <Router>
