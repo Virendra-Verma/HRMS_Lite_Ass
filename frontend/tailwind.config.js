@@ -9,6 +9,7 @@ export default {
         extend: {
             colors: {
                 // Primary - Indigo (WCAG AA compliant)
+                
                 primary: {
                     50: '#eef2ff',
                     100: '#e0e7ff',
@@ -23,6 +24,7 @@ export default {
                     950: '#1e1b4b',
                 },
                 // Accent - Violet for CTAs and highlights
+                
                 accent: {
                     50: '#f5f3ff',
                     100: '#ede9fe',
@@ -260,3 +262,4 @@ export default {
     },
     plugins: [],
 }
+
