@@ -177,7 +177,6 @@ import { ThemeToggle } from './components/common';
   border-color: var(--border-primary);
 }
 ```
-
 ### Tailwind Classes
 ```jsx
 <div className="bg-primary-500 text-white rounded-lg p-4">
