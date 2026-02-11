@@ -19,7 +19,7 @@ def get_dashboard(db: Session = Depends(get_db)):
     absent_today = len([a for a in today_attendance if a.status == 'Absent'])
     not_marked = total_employees - (present_today + absent_today)
 
-    # 2. Recent Activity FIX: Nested mapping for 'record.employee.name'
+  
     recent_att_query = db.query(Attendance, Employee).join(
         Employee, Attendance.employee_id == Employee.id
     ).order_by(Attendance.created_at.desc()).limit(5).all()
@@ -31,7 +31,7 @@ def get_dashboard(db: Session = Depends(get_db)):
             "date": str(att.date),
             "status": att.status,
             "employee": {
-                "name": emp.full_name  # <--- Frontend yahan se 'name' uthayega
+                "name": emp.full_name  
             }
         })
 

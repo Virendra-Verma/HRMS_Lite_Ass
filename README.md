@@ -1,4 +1,3 @@
-
 ## 📘 HRMS Lite – Full-Stack Human Resource Management System
 
 A **high-performance, scalable Human Resource Management System (HRMS)** designed to streamline employee data management and attendance tracking.

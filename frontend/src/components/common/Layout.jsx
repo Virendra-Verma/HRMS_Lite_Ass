@@ -10,7 +10,6 @@ const Layout = () => {
             <div className="fixed bottom-0 left-1/4 w-96 h-96 bg-secondary-500/5 rounded-full blur-3xl pointer-events-none" />
 
             <Sidebar />
-
             <main className="ml-64 min-h-screen relative">
                 <div className="p-8">
                     <Outlet />

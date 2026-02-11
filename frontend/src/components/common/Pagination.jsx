@@ -9,7 +9,8 @@ const Pagination = ({ page, totalPages, onPageChange, total, limit, showInfo = t
             for (let i = 1; i <= totalPages; i++) {
                 pages.push(i);
             }
-        } else {
+        } 
+        else {
             pages.push(1);
 
             if (page > 3) {

@@ -44,7 +44,6 @@ const DatePicker = ({ value, onChange, max, min, label, placeholder = 'Select da
             } else {
                 top = rect.bottom + margin;
             }
-
             left = rect.left;
             if (left + calendarWidth > window.innerWidth - margin) {
                 left = window.innerWidth - calendarWidth - margin;

@@ -82,3 +82,4 @@ watchfiles==1.1.1
 wcwidth==0.2.8
 websockets==15.0.1
 Werkzeug==3.0.4
+

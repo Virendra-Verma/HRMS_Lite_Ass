@@ -5,17 +5,17 @@ import routers.employee as employee
 import routers.attendance as attendance
 import routers.dashboard as dashboard
 
-# 1. Database tables create karna (Start hone se pehle)
+# 1. Database tables create karna 
 Base.metadata.create_all(bind=engine)
 
-# 2. FastAPI instance (Sirf EK BAAR)
+# 2. FastAPI instance 
 app = FastAPI(
     title="HRMS Python Backend",
     description="Backend migrated to FastAPI",
     version="1.0.0"
 )
 
-# 3. CORS Middleware (Sirf EK BAAR aur routers se PEHLE)
+# 3. CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 

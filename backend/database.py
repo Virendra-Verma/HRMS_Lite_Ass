@@ -19,8 +19,7 @@ if not DATABASE_URL:
     DB_PORT = os.getenv("DB_PORT", "5432")
     DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-# Render/PostgreSQL fix: sqlalchemy 'postgres://' ko nahi pehchanta, 
-# 'postgresql://' hona zaroori hai
+
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 

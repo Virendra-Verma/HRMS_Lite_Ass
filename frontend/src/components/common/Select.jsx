@@ -197,7 +197,6 @@ const Select = ({
                 </div>,
                 document.body
             )}
-
             {error && <p className="text-error-400 text-xs mt-1">{error}</p>}
         </div>
     );

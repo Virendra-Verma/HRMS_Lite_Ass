@@ -29,7 +29,7 @@ def get_all_attendance(
     offset = (page - 1) * limit
     results = query.order_by(Attendance.date.desc()).offset(offset).limit(limit).all()
     
-    # FRONTEND FIX: Frontend mang raha hai record.employee.name
+   
     formatted_results = []
     for att, emp in results:
         formatted_results.append({
@@ -44,7 +44,6 @@ def get_all_attendance(
             }
         })
 
-    # Frontend totalPages calculation ke liye response structure
     import math
     return {
         "success": True, 
@@ -57,7 +56,7 @@ def get_all_attendance(
 @router.post("")
 @router.post("/", include_in_schema=False)
 def mark_attendance(data: dict, db: Session = Depends(get_db)):
-    # Simple dict access for flexibility with frontend keys
+   
     emp_id = data.get('employeeId')
     att_date = data.get('date')
     status = data.get('status')
